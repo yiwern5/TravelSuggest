@@ -4,4 +4,16 @@
 
 <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laboriosam inventore recusandae consequuntur omnis iusto numquam, aperiam odio? Repellat, labore. Dicta distinctio a tenetur? Magnam sunt possimus adipisci hic debitis dignissimos?</p>
 
+<h1>Query Data</h1>
+<div>
+    <p>{{QueryData.location}}</p>
+</div>
+
+<h1>Query Result</h1>
+<div>
+    {% for result in ResultsData %}
+    <p>{{result.location}}</p>
+    {% endfor %}
+</div>
+
 {% endblock %}
