@@ -12,16 +12,6 @@
     </form>
 </div>
 
-<h1>Query Data</h1>
-<div>
-    <p>{{QueryData.location}}</p>
-</div>
-
-<h1>Query Result</h1>
-<div>
-    {% for result in ResultsData %}
-    <p>{{result.location}}</p>
-    {% endfor %}
-</div>
+<a href="{%url 'query-result' %}">Head to Query Result Page</a> 
 
 {% endblock %}
