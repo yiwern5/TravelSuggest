@@ -8,15 +8,12 @@ def home(request):
     resultsData = ResultData.objects.filter(query=queryData)
 
     queryForm = QueryForm()                                     # QueryForm(instance=queryData)
-    is_form_submitted = False
 
-    if request.method == 'POST' and not is_form_submitted:
+    if request.method == 'POST':
         form = QueryForm(request.POST)                          # form = QueryForm(request.POST, instance=queryData) to repplace existing query
         if form.is_valid():
-            # form.save()
-            user_query_promt = str(form.cleaned_data)
-
-            generate_travel_suggestions(user_query_promt)
+            query = form.save()
+            return redirect('result', pk=query.id)
     
     data = {'QueryForm': queryForm, 
             'QueryData': queryData,
@@ -24,8 +21,9 @@ def home(request):
 
     return render(request, 'base/home.html', data)
 
-def result(request, query): 
-    data = {}
+def result(request, pk): 
+    queryData = QueryData.objects.get(id=pk)
+    data = {'QueryData': queryData}
     return render(request, 'base/result.html', data)
 
 def generate_travel_suggestions(travel_query):
@@ -64,12 +62,12 @@ def generate_travel_suggestions(travel_query):
     
     prompt_parts = [
     "Given a travel location, corresponding travel duration and requirements."
-    + "Generate travel suggestions for that location in a Json format for use in Django( no need for it to be nested )." 
+    + "Generate travel suggestions for that location in a python dictionary format for use in Django( no need for it to be nested )." 
     + " Here are the wanted labels: Day of travel (e.g.1 ), Time of Travel (e.g. Morning, Evening), Description, Expected Spending, Additional Details, Image." 
     + "\n\nThings to take note of: \nIf the the number of days of the travel is greater than a day. Separate suggestions to morning, afternoon, evening and night."
     + "Travel suggestion should satisfy the travel requirements as specified by the query info."
     + "The image provided should be an image url that is callable i.e. from the internet and can be outputted in html using img tags."
-        + "\n\nHere is the input in json format:" + travel_query,
+        + "\n\nHere is the input in python dictionary format:" + travel_query,
     ]
 
     response = model.generate_content(prompt_parts)
