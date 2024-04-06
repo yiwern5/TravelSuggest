@@ -4,9 +4,6 @@ from .forms import QueryForm
 import google.generativeai as genai
 
 def home(request):
-    queryData = QueryData.objects.last()
-    resultsData = ResultData.objects.filter(query=queryData)
-
     queryForm = QueryForm()                                     # QueryForm(instance=queryData)
 
     if request.method == 'POST':
@@ -15,14 +12,19 @@ def home(request):
             query = form.save()
             return redirect('result', pk=query.id)
     
-    data = {'QueryForm': queryForm, 
-            'QueryData': queryData,
-            'ResultsData': resultsData}
-
+    data = {'QueryForm': queryForm}
     return render(request, 'base/home.html', data)
 
 def result(request, pk): 
     queryData = QueryData.objects.get(id=pk)
+    query_prompt = {
+        'location': queryData.location,
+        'criteria': queryData.criteria,
+        'days': queryData.duration,
+        'budget': queryData.budget,
+    }
+    generate_travel_suggestions(str(query_prompt))
+
     data = {'QueryData': queryData}
     return render(request, 'base/result.html', data)
 
